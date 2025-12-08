@@ -1,0 +1,106 @@
+def tampil_menu(menu):
+    print("====== DAFTAR MENU ======")
+    for kode, item in menu.items():
+        print(f"{kode}. {item['nama']} — Rp {item['harga']:,}")
+    print("=========================")
+
+def main():
+    # Input nama pembeli
+    pembeli = input("Masukkan nama pembeli: ").strip()
+    print(f"\nHalo {pembeli}! Selamat datang di Virgi Topup\n")
+
+    # Daftar menu
+    menu = {
+        "1": {"nama": "80 Robux", "harga": 18000, "jumlah_rb": 80},
+        "2": {"nama": "100 Robux", "harga": 13000, "jumlah_rb": 100},
+        "3": {"nama": "200 Robux", "harga": 27000, "jumlah_rb": 200},
+        "4": {"nama": "300 Robux", "harga": 40000, "jumlah_rb": 300},
+        "5": {"nama": "400 Robux", "harga": 54000, "jumlah_rb": 400},
+        "6": {"nama": "500 Robux", "harga": 68000, "jumlah_rb": 500},
+        "7": {"nama": "600 Robux", "harga": 80000, "jumlah_rb": 600},
+        "8": {"nama": "700 Robux", "harga": 92000, "jumlah_rb": 700},
+    }
+
+    keranjang = []
+    total_robux = 0
+
+    while True:
+        tampil_menu(menu)
+        pilih = input("Masukkan kode menu (atau 'selesai' untuk selesai): ").strip()
+
+        if pilih.lower() == 'selesai':
+            break
+
+        if pilih in menu:
+            try:
+                jumlah = int(input("Berapa banyak: "))
+                if jumlah <= 0:
+                    print("Jumlah harus lebih dari 0!")
+                    continue
+            except ValueError:
+                print("Masukkan angka yang benar!")
+                continue
+
+            item = menu[pilih]
+            subtotal = item["harga"] * jumlah
+            total_robux += item["jumlah_rb"] * jumlah
+
+            keranjang.append({
+                "nama": item["nama"],
+                "harga": item["harga"],
+                "jumlah": jumlah,
+                "subtotal": subtotal,
+                "robux": item["jumlah_rb"] * jumlah
+            })
+
+            print(f"--> {jumlah} x {item['nama']} ditambahkan! Subtotal: Rp {subtotal:,}\n")
+        else:
+            print("Kode menu tidak valid!\n")
+
+    if not keranjang:
+        print("Tidak ada pesanan. Terima kasih.")
+        return
+
+    print("\n=========== STRUK BELANJA ===========")
+    print(f"Nama Pembeli : {pembeli}")
+    print("-------------------------------------")
+
+    total = 0
+    for i, pesanan in enumerate(keranjang, start=1):
+        print(f"{i}. {pesanan['nama']} — {pesanan['jumlah']} x Rp {pesanan['harga']:,} = Rp {pesanan['subtotal']:,}")
+        total += pesanan['subtotal']
+
+    print("-------------------------------------")
+    print(f"TOTAL ROBUX DIBELI : {total_robux} Robux")
+    print(f"TOTAL SEBELUM DISKON : Rp {total:,}")
+
+    # CEK DISKON
+    diskon = 0
+    if total_robux >= 200:
+        diskon = int(total * 0.05)
+        print("DISKON 5% (Pembelian minimal 200 Robux) : -Rp", f"{diskon:,}")
+    else:
+        print("DISKON : Tidak memenuhi syarat (minimal 200 Robux)")
+
+    total_setelah_diskon = total - diskon
+    print(f"TOTAL SETELAH DISKON : Rp {total_setelah_diskon:,}")
+    print("-------------------------------------")
+
+    # Proses pembayaran
+    while True:
+        try:
+            bayar = int(input("\nJumlah Uang Pembeli: Rp "))
+            if bayar < total_setelah_diskon:
+                print("Uang tidak cukup! Silakan masukkan nominal yang sesuai.")
+            else:
+                kembalian = bayar - total_setelah_diskon
+                print(f"Uang Kembalian     : Rp {kembalian:,}")
+                print("\n========== TRANSAKSI SELESAI ==========")
+                break
+        except ValueError:
+            print("Masukkan angka yang valid!")
+
+    print("\n=== TERIMA KASIH TELAH BERBELANJA DI VIRGI TOPUP ===")
+
+if __name__ == "__main__":
+    main()
